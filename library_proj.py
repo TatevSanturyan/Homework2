@@ -8,21 +8,33 @@ class Book:
         self.all_copies = []
         self.availabal_copies = []
 
+    def __repr__(self):
+        return f"{self.title}, {self.authors}"
+
+
     def add_copy(self, copy):
         self.all_copies.append(copy)
-        pass
-    def get_available_copies(self, copy):
-        pass
+        if copy.availability_status == "available":
+            self.availabal_copies.append(copy)
+    @property
+    def available_copies(self):
+        return self.availabal_copies
 
 
-class BookCopy:
-    def __init__(self, book, copy_id):
+
+
+class BookCopy(Book):
+    def __init__(self, book, copy_id,**kwargs):
+        super().__init__(**kwargs)
         self.book = book
         self.copy_id = copy_id
         self.the_borrower = None
         self.borrowed_date = None
         self.availability_status = "available"
         self.condition_reyting = range(1, 11)
+
+    def __str__(self):
+        return f"copy of {self.title}"
 
     def borrow_this_copy(self):
         pass
