@@ -1,97 +1,105 @@
+from datetime import datetime
 class Book:
-    def __init__(self, title, authors, year, ISBN, genre):
+    def __init__(self,title, authors, year, isbn, ganre):
         self.title = title
         self.authors = authors
         self.year = year
-        self.ISBN = ISBN
-        self.genre = genre
+        self.isbn = isbn
+        self.ganre = ganre
         self.all_copies = []
-        self.availabal_copies = []
-
-    def __repr__(self):
-        return f"{self.title}, {self.authors}"
-
-
-    def add_copy(self, copy):
-        self.all_copies.append(copy)
-        if copy.availability_status == "available":
-            self.availabal_copies.append(copy)
-    @property
-    def available_copies(self):
-        return self.availabal_copies
-
-
-
-
-class BookCopy(Book):
-    def __init__(self, book, copy_id,**kwargs):
-        super().__init__(**kwargs)
-        self.book = book
-        self.copy_id = copy_id
-        self.the_borrower = None
-        self.borrowed_date = None
-        self.availability_status = "available"
-        self.condition_reyting = range(1, 11)
+        self.available_copies = []
 
     def __str__(self):
-        return f"copy of {self.title}"
+        return f"{self.title} by {self.authors}"
 
-    def borrow_this_copy(self):
-        pass
+    def add_new_copy(self, copy):
+        self.all_copies.append(copy)
+        self.available_copies.append(copy)
 
-    def return_this_copy(self):
+    @property
+    def availablecopies(self):
+        return self.available_copies
+
+class BookCopy:
+    def __init__(self, book, copy_id, borrower = None, borrowed_date = None, condition_rating = None):
+        self.book = book
+        self.copy_id = copy_id
+        self.borrower = borrower
+        self.borrowed_date = borrowed_date
+        self.availability_status = "available"
+        self.condition_rating = condition_rating
+
+    def borrow_this_copy(self, student):
+        if self.availability_status =="available":
+            self.borrower = student
+            self.borrowed_date = datetime.now()
+            self.availability_status = "is taken"
+            pass
+
+
+    def return_this_copy(self, copy):
         pass
 
     def change_condition_rating(self):
         pass
 
 
+
 class Student:
-    def __init__(self, name, ID, email, book_borrowing_limit=5):
+    def __init__(self, name, id, email, book_borrowing_limit = 5):
         self.name = name
-        self.ID = ID
+        self.id = id
         self.email = email
-        self.books_currently_taken = []
+        self.taken_books = []
         self.book_borrowing_limit = book_borrowing_limit
 
-    def borrow_book(self):
+    def __str__(self):
+        return f"{self.name}, ID: {id}"
+
+    def borrow_book(self, book):
         pass
 
-    def return_book(self):
+    def return_book(self, book):
         pass
 
-    def get_status(self):
-        pass
+    def current_status(self):
+        print(f"You borraw:{self.taken_books} books at ")
+
 
 
 class Library:
     def __init__(self):
         self.owned_books = []
-        self.students = []
+        self.registrates_students = []
 
-    def add_books(self):
+    def add_new_book(self, book):
+        self.owned_books.append(book)
+
+    def remove_book(self,book):
+        self.owned_books.remove(book)
+
+    def add_student(self, student):
+        if student  in self.registrates_students:
+            raise Exception("Student is already registred!")
+        else:
+            self.registrates_students.append(student)
+
+
+    def remove_student(self,student):
+        if student in self.registrates_students:
+            self.registrates_students.remove(student)
+
+    def change_borrowing_limit(self,new_limit):
         pass
 
-    def remove_books(self):
-        pass
+    def see_all_books(self):
+        return self.owned_books
 
-    def add_students(self):
-        pass
-
-    def remove_students(self):
-        pass
-
-    def change_borrowing_limit(self):
-        pass
-
-    def det_all_books(self):
-        pass
-
-    def get_available_books(self):
-        pass
-
-    def search_book_by_title(self, title):
+    def see_oll_available_books(self):
         pass
 
     def search_book_by_author(self, author):
+        # if Book.authors == author
+        pass
+    def search_book_by_title(self, title):
         pass
