@@ -11,7 +11,7 @@ class Book:
         self.all_copies = []
         self.available_copies = []
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.title} by {self.authors}"
 
     def __eq__(self, other):
@@ -40,7 +40,7 @@ class BookCopy:
         self.availability_status = "available"
         self.condition_rating = condition_rating
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.book}"
 
     def borrow_this_copy(self, student):
@@ -74,6 +74,9 @@ class Student:
         self.__email = email
         self.taken_books = []
         self.borrowing_limit = borrowing_limit
+
+    def __repr__(self):
+        return f"{self.name}, ID: {self.id}"
 
     @property
     def email(self):
@@ -121,9 +124,8 @@ class Library:
         self.owned_books = []
         self.registrates_students = []
 
-    def add_new_book(self, *books):
-        for book in books:
-            self.owned_books.append(book)
+    def add_new_book(self, book):
+        self.owned_books.append(book)
 
     def remove_book(self, book):
         self.owned_books.remove(book)
@@ -174,7 +176,7 @@ book3 = Book("Hamlet", "Shekspir", 1962, 4455889, "Novel")
 book4 = Book("Fahrenheit 451", "Ray Bradbury", 1953, 125874, "Fantasy")
 
 student1 = Student("Mheryan Davit", 111, "mheryan@gmail.com")
-student2 = Student("santuryan Tatevik", 222, "tateviksanturyan@gmail.com")
+student2 = Student("Santuryan Tatevik", 222, "tateviksanturyan@gmail.com")
 book_copy1 = BookCopy(book1, 123)
 book_copy1_1 = BookCopy(book1, 124)
 book_copy1_2 = BookCopy(book1, 125)
@@ -204,11 +206,15 @@ student1.borrow_book(book_copy1_2)
 print(book_copy2_1.book.available_copies)
 print(student1.taken_books)
 print(book_copy1_1.availability_status)
-books = [book_copy1, book_copy1_1, book_copy1_2, book_copy2_1, book_copy2_2, book_copy2_3, book_copy2_4, book_copy3,
-         book_copy3_1, book_copy4, book_copy4_1, book_copy4_2]
+# books = [book1, book2, book3, book4]
 students = [student1,student2]
 library = Library()
-library.add_new_book(books)
+library.add_new_book(book1)
+library.add_new_book(book2)
+library.add_new_book(book3)
+library.add_new_book(book4)
 library.add_student(students)
+
 print(library.registrates_students)
 print(library.owned_books)
+print(library.search_book_by_title("Hamlet"))
