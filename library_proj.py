@@ -1,47 +1,53 @@
+
 from datetime import datetime, timedelta
+from dataclasses import dataclass, field
+from pprint import pprint
 
 
+@dataclass()
 class Book:
-    def __init__(self, title: str, authors: str, year: int, isbn: int, ganre: str):
-        self.title = title
-        self.authors = authors
-        self.year = year
-        self.isbn = isbn
-        self.ganre = ganre
-        self.all_copies = []
-        self.available_copies = []
+    title: str
+    authors: str
+    year: int
+    isbn: int
+    ganre: str
+    all_copies: list = field(default_factory=list)
+    available_copies: list = field(default_factory=list)
 
     def __repr__(self):
         return f"{self.title} by {self.authors}"
 
+
     def __eq__(self, other):
         return isinstance(other, Book) and self.isbn == other.isbn
+
 
     def add_new_copy(self, copy):
         self.all_copies.append(copy)
         if copy.availability_status == "available":
             self.available_copies.append(copy)
 
+
     def get_available_copies(self):
-        return self.available_copies
+        return f"Available copies: {self.available_copies}"
+
 
     def remove_copy(self, copy):
         if copy in self.available_copies:
             self.available_copies.remove(copy)
 
 
+@dataclass()
 class BookCopy:
-    def __init__(self, book, copy_id: int, borrower: str = None, borrowed_date: datetime = None,
-                 condition_rating: int = None):
-        self.book = book
-        self.copy_id = copy_id
-        self.borrower = borrower
-        self.borrowed_date = borrowed_date
-        self.availability_status = "available"
-        self.condition_rating = condition_rating
+    book: Book
+    copy_id: int
+    borrower: str = None
+    borrowed_date: datetime = None
+    availability_status: str = "available"
+    condition_rating: int = None
 
-    def __repr__(self):
-        return f"{self.book}"
+    # def __repr__(self):
+    #     return f"{self.book}"
 
     def borrow_this_copy(self, student):
         if self.availability_status == "available":
@@ -109,6 +115,7 @@ class Student:
         else:
             print("You did not borrow this book copy.")
 
+    @property
     def current_status(self):
         print(f"{self.name}'s borrowed books:")
         status = []
@@ -125,12 +132,16 @@ class Library:
         self.registrates_students = []
 
     def add_new_book(self, book):
-        self.owned_books.append(book)
+        for books in book.all_copies:
+            if books in self.owned_books:
+                raise Exception("Book is already in Library")
+            else:
+                self.owned_books.append(book)
 
     def remove_book(self, book):
         self.owned_books.remove(book)
 
-    def add_student(self, *student):
+    def add_student(self, *students):
         for student in students:
             if student in self.registrates_students:
                 raise Exception("Student is already registered!")
@@ -141,8 +152,11 @@ class Library:
         if student in self.registrates_students:
             self.registrates_students.remove(student)
 
-    def change_borrowing_limit(self, student, new_limit):
-        student.borrowing_limit = new_limit
+    @staticmethod
+    def change_borrowing_limit(student):
+        for book in student.taken_books:
+            limit = student.borrowing_limit - 1
+        return f"{student} can borrow {limit} books"
 
     def see_all_books(self):
         return self.owned_books
@@ -155,10 +169,10 @@ class Library:
                 available_books.append((book, available_copies))
         return available_books
 
-    def search_book_by_author(self, author):
+    def search_book_by_author(self, authores):
         result = []
         for book in self.owned_books:
-            if book.author == author:
+            if book.author == authores:
                 result.append(book)
         return result
 
@@ -203,11 +217,11 @@ book_copy4_2.book.add_new_copy(book_copy4_2)
 book_copy1.borrow_this_copy(student1)
 book_copy1_1.borrow_this_copy(student1)
 student1.borrow_book(book_copy1_2)
-print(book_copy2_1.book.available_copies)
-print(student1.taken_books)
-print(book_copy1_1.availability_status)
+pprint(book_copy2_1.book.available_copies)
+pprint(student1.taken_books)
+pprint(book_copy1_1.availability_status)
 # books = [book1, book2, book3, book4]
-students = [student1,student2]
+students = [student1, student2]
 library = Library()
 library.add_new_book(book1)
 library.add_new_book(book2)
@@ -215,6 +229,8 @@ library.add_new_book(book3)
 library.add_new_book(book4)
 library.add_student(students)
 
-print(library.registrates_students)
-print(library.owned_books)
-print(library.search_book_by_title("Hamlet"))
+pprint(library.registrates_students)
+pprint(library.owned_books)
+pprint(library.search_book_by_title("Hamlet"))
+pprint(library.change_borrowing_limit(student1))
+pprint(book1.get_available_copies())
