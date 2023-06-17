@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 from dataclasses import dataclass, field
 from pprint import pprint
@@ -17,20 +16,17 @@ class Book:
     def __repr__(self):
         return f"{self.title} by {self.authors}"
 
-
     def __eq__(self, other):
         return isinstance(other, Book) and self.isbn == other.isbn
 
-
     def add_new_copy(self, copy):
         self.all_copies.append(copy)
-        if copy.availability_status == "available":
-            self.available_copies.append(copy)
-
+        for copy in self.all_copies:
+            if copy.availability_status == "available":
+                self.available_copies.append(copy)
 
     def get_available_copies(self):
         return f"Available copies: {self.available_copies}"
-
 
     def remove_copy(self, copy):
         if copy in self.available_copies:
@@ -117,7 +113,6 @@ class Student:
 
     @property
     def current_status(self):
-        print(f"{self.name}'s borrowed books:")
         status = []
 
         for book_copy in self.taken_books:
@@ -154,9 +149,14 @@ class Library:
 
     @staticmethod
     def change_borrowing_limit(student):
-        for book in student.taken_books:
-            limit = student.borrowing_limit - 1
-        return f"{student} can borrow {limit} books"
+        if len(student.taken_books) == 5:
+            return f"limit has been reached"
+        else:
+            i = 0
+            for _ in student.taken_books:
+                i += 1
+                limit = student.borrowing_limit - i
+                return f"{student} can borrow {limit} books"
 
     def see_all_books(self):
         return self.owned_books
@@ -234,3 +234,5 @@ pprint(library.owned_books)
 pprint(library.search_book_by_title("Hamlet"))
 pprint(library.change_borrowing_limit(student1))
 pprint(book1.get_available_copies())
+pprint(Library.change_borrowing_limit(student1))
+pprint(student1.current_status)
